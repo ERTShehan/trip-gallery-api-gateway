@@ -1,0 +1,43 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+
+  config:
+    import: "optional:configserver:http://localhost:8888"
+
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: false
+      routes:
+        - id: trip-service
+          uri: lb://TRIP-SERVICE
+          predicates:
+            - Path=/trip-service/**
+          filters:
+            - StripPrefix=1
+
+        - id: travel-log-service
+          uri: lb://TRAVEL-LOG-SERVICE
+          predicates:
+            - Path=/travel-log-service/**
+          filters:
+            - StripPrefix=1
+
+        - id: media-service
+          uri: lb://MEDIA-SERVICE
+          predicates:
+            - Path=/media-service/**
+          filters:
+            - StripPrefix=1
+
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowed-origins: "*"
+            allowed-methods: "*"
+            allowed-headers: "*"
