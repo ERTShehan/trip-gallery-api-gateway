@@ -31,11 +31,47 @@
         <spring-cloud.version>2025.1.2</spring-cloud.version>
     </properties>
     <dependencies>
+
+        <!--
+            Gateway MVC (Tomcat-based). Replaces the reactive WebFlux/Netty stack.
+            spring-cloud-starter-gateway-server-webmvc pulls in spring-webmvc
+            and embeds Tomcat automatically — no WebFlux jars needed.
+        -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-gateway-server-webmvc</artifactId>
+        </dependency>
+
+        <!--
+            Required for lb:// URI resolution on the MVC stack.
+            The reactive gateway bundles this transitively, but the MVC gateway
+            does NOT — it must be declared explicitly or lb:// routes fail with
+            "No instances available" at startup.
+        -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+        </dependency>
+
+        <!-- Eureka Client — registers gateway and resolves lb:// service names -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
 
+        <!-- Config Client — fetches remote config from Config Server -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-config</artifactId>
+        </dependency>
+
+        <!-- Actuator — /actuator/health, /actuator/gateway route introspection -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!-- DevTools — hot reload in IDE only, excluded from production jar -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
@@ -43,20 +79,6 @@
             <optional>true</optional>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-config</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webflux</artifactId>
-        </dependency>
     </dependencies>
 
     <dependencyManagement>
